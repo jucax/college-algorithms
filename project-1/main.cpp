@@ -30,7 +30,7 @@ void function1(){
 }
 
 void decreasingSeparatedCopies(std::string word, std::string separators, int count) {
-    for (int i = 0 ; i < count; i++) {
+    for (int i = 0 ; i < count && i < word.length() ; i++) {
 
         // Reduce last character in word
         for (int j = 0 ; j < word.length() - i ; j++) {
@@ -38,7 +38,7 @@ void decreasingSeparatedCopies(std::string word, std::string separators, int cou
         }
 
         // Print separator
-        if (!separators.empty() && i < count - 1) {
+        if (!separators.empty() && i < count - 1 && word.length() - i > 1) {
             std::cout << separators[i % separators.length()]; //Cicle within separator string
         }
     }
