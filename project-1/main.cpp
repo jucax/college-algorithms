@@ -57,13 +57,37 @@ void function3(){
     std::cout << "--- Begin Function 3 ---" << std::endl;
     // declare and open input stream from numbers.txt
     std::ifstream fin;
-    fin.open("Root/numbers.txt");
+    fin.open("numbers.txt");
     // throw error and exit if numbers.txt is not found
     if (fin.fail()) {
         std::cerr << "The file \"numbers.txt\" does not exist. Exiting."
                   << std::endl;
         exit(1);
     }
+
+    double num;
+    fin >> num;
+
+    double max = num;
+    double log2_result = 0;
+    bool positive = false;
+
+    do {  
+        if (num > max) {
+            max = num;
+        }
+        if (num > 0) {
+            positive = true;
+            double log_value = std::log2(std::ceil(num));
+            log2_result += log_value;
+        }
+    } while (fin >> num); 
+
+    fin.close();
+    std::cout << "Maximum value: " << max << std::endl;
+    std::cout << "Sum of log2(ceil(x)) for positive numbers: " 
+              << (positive ? log2_result : -1) << std::endl;
+
 
        std::cout << "---   End Function 3 ---" << std::endl;
 }
