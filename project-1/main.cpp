@@ -9,22 +9,49 @@ void function1(){
     
     char symbol;
     bool reading = true;
+    int symbolsCount[32] = {0};
     while (reading) {
         std::cin >> symbol;
         if (symbol < '!' || symbol > '@') {
             std::cout << "Not an ASCII character in the desired range" << std::endl;
             reading = false;
         } 
+        int index = symbol - '!';
+        symbolsCount[index]++;
     }
-        std::cout << "---   End Function 1 ---" << std::endl;
+
+    // Print the values
+    for (int i = 0; i < 32; i++) {
+        char symbol = '!' + i; 
+        std::cout << symbol << ": " << symbolsCount[i] << std::endl;
+    }
+
+    std::cout << "---   End Function 1 ---" << std::endl;
 }
 
+void decreasingSeparatedCopies(std::string word, std::string separators, int count) {
+    for (int i = 0 ; i < count; i++) {
+
+        // Reduce last character in word
+        for (int j = 0 ; j < word.length() - i ; j++) {
+            std::cout << word[j];
+        }
+
+        // Print separator
+        if (!separators.empty() && i < count - 1) {
+            std::cout << separators[i % separators.length()]; //Cicle within separator string
+        }
+    }
+    std::cout << std::endl;
+}
 
 void function2(){
     std::cout << "--- Begin Function 2 ---" << std::endl;
+    decreasingSeparatedCopies("Southwestern", "1840", 6);
+    decreasingSeparatedCopies("Southwestern", "", 3);
+    decreasingSeparatedCopies("SU", "Texas", 4);
     std::cout << "---   End Function 2 ---" << std::endl;
 }
-
 
 void function3(){
     std::cout << "--- Begin Function 3 ---" << std::endl;
