@@ -10,6 +10,7 @@ void function1(){
     char symbol;
     bool reading = true;
     int symbolsCount[32] = {0};
+
     while (reading) {
         std::cin >> symbol;
         if (symbol < '!' || symbol > '@') {
@@ -105,19 +106,39 @@ public:
       @return true if the entered passcode matches the secret value
    */
    bool valid();
+
+   void operator--();
+
 private:
     int digit1 = -1;
     int digit2 = -1;
     int digit3 = -1;
     int digit4 = -1;
+
+    static const int SECRET1 = 0;
+    static const int SECRET2 = 1;
+    static const int SECRET3 = 2;
+    static const int SECRET4 = 3;
 };
 
 void Passcode::push(int button) {
-   
+    digit1 = digit2;
+    digit2 = digit3;
+    digit3 = digit4;
+    digit4 = button;
 }
 
 bool Passcode::valid() {
-    return true;
+    return (digit1 == SECRET1 && digit2 == SECRET2 &&
+            digit3 == SECRET3 && digit4 == SECRET4);
+}
+
+void Passcode::operator--() {
+    // Shift digits to the right, erasing the most recent entry
+    digit4 = digit3;
+    digit3 = digit2;
+    digit2 = digit1;
+    digit1 = -1; // Reset leftmost digit
 }
 
 void function4(){
