@@ -171,6 +171,7 @@ private:
     int digit3 = -1;
     int digit4 = -1;
 
+    // Secret code
     static const int SECRET1 = 0;
     static const int SECRET2 = 1;
     static const int SECRET3 = 2;
@@ -178,6 +179,7 @@ private:
 };
 
 void Passcode::push(int button) {
+    // Shift digits to the left to make room for the new digit
     digit1 = digit2;
     digit2 = digit3;
     digit3 = digit4;
@@ -185,8 +187,17 @@ void Passcode::push(int button) {
 }
 
 bool Passcode::valid() {
-    return (digit1 == SECRET1 && digit2 == SECRET2 &&
+    // Check if the digits match with the password
+    bool isValid = (digit1 == SECRET1 && digit2 == SECRET2 &&
             digit3 == SECRET3 && digit4 == SECRET4);
+
+    // Reset the passcode after validity check
+    digit1 = -1;
+    digit2 = -1;
+    digit3 = -1;
+    digit4 = -1;
+
+    return isValid;
 }
 
 void Passcode::operator--() {
@@ -194,9 +205,14 @@ void Passcode::operator--() {
     digit4 = digit3;
     digit3 = digit2;
     digit2 = digit1;
-    digit1 = -1; // Reset leftmost digit
+    digit1 = -1;
 }
 
+/**
+ * Runs multiple input sequences to tests the functionality of the Passcode class.
+ * Compares the actual outcomes with the expected results to ensure the passcode validation
+ * works correctly. Both expected and actual results are printed.
+*/
 void function4(){
     std::cout << "--- Begin Function 4 ---" << std::endl;
     // The valid secret code for this iPhone is 0123. 
@@ -204,7 +220,7 @@ void function4(){
     Passcode iPhone;
     iPhone.push(2);
     iPhone.push(3);
-    std::cout << iPhone.valid() << std::endl;
+    std::cout << std::boolalpha << iPhone.valid() << std::endl;
     std::cout << "Expected: false" << std::endl;
     iPhone.push(0);
     iPhone.push(1);
@@ -230,11 +246,19 @@ void function4(){
     iPhone.push(3);
     std::cout << iPhone.valid() << std::endl;
     std::cout << "Expected: true" << std::endl;
+    
+    Passcode Samsung;
+    std::cout << Samsung.valid() << std::endl;  // Should be false because no digits are entered yet
+    std::cout << "Expected: false" << std::endl;
 
     std::cout << "---   End Function 4 ---" << std::endl;
 }
 
-
+/**
+ * Acts as the program's starting point, allowing the user to select and run one of four preovious functions.
+ * Depending on the number the user introduces (1-4), the associated function is executed.
+ * If the input is outside the valid range, no action is taken and the execution stops.
+*/
 int main() {
     int functionNumber;
     std::cin >> functionNumber;
