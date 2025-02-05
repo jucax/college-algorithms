@@ -89,7 +89,7 @@ void function2(){
     decreasingSeparatedCopies("Texas", "", 3); // No separators
 
     // Special characters tests
-    decreasingSeparatedCopies("Hello World", "|*|", 8); // Spaces and lines
+    decreasingSeparatedCopies("Hello World", "/& |", 8); // Spaces in word
     decreasingSeparatedCopies("@#$%^", "!?", 5); // Other symbols
 
     std::cout << "---   End Function 2 ---" << std::endl;
@@ -108,7 +108,7 @@ void function3(){
     std::cout << "--- Begin Function 3 ---" << std::endl;
     // Declare and open input stream from numbers.txt
     std::ifstream fin;
-    fin.open("numbers5.txt");
+    fin.open("numbers6.txt");
 
     // Throw error and exit if numbers.txt is not found
     if (fin.fail()) {
@@ -118,7 +118,7 @@ void function3(){
     }
 
     double num;
-    fin >> num;
+    fin >> num; // Read first number
 
     double max = num; // Start assuming the first number is the maximum
     double log2_result = 0;
@@ -144,12 +144,12 @@ void function3(){
     std::cout << "Maximum value: " << max << std::endl;
 
     // Print the sum of base-2 log of the ceiling for positive numbers
-    std::cout << "Sum of log2(ceil(x)) for positive numbers: " << (positive ? log2_result : -1) << std::endl; // If positive is still false, then print -1
+    std::cout << "Sum of log2(ceil(num)) for positive numbers: " << (positive ? log2_result : -1) << std::endl; // If positive is still false, then print -1
 
     std::cout << "---   End Function 3 ---" << std::endl;
 }
 
-
+// Class that simulates the functionality of a 4-digit PIN system like that of a telephone.
 class Passcode{
 public:
    /**
@@ -162,10 +162,14 @@ public:
       @return true if the entered passcode matches the secret value
    */
    bool valid();
-
+    /**
+      Removes the last entered digit from the passcode.
+      If no digits have been entered, nothing is done.
+    */
    void operator--();
 
 private:
+    // digits start empty
     int digit1 = -1;
     int digit2 = -1;
     int digit3 = -1;
@@ -173,10 +177,10 @@ private:
     int numberOfDigit = 0;
 
     // Secret code
-    static const int SECRET1 = 0;
-    static const int SECRET2 = 1;
-    static const int SECRET3 = 2;
-    static const int SECRET4 = 3;
+    static const int SECRET_DIGIT1 = 0;
+    static const int SECRET_DIGIT2 = 1;
+    static const int SECRET_DIGIT3 = 2;
+    static const int SECRET_DIGIT4 = 3;
 };
 
 void Passcode::push(int button) {
@@ -195,6 +199,8 @@ void Passcode::push(int button) {
         case 3:
             digit4 = button;
         break;
+        default:
+            break;
         }
         numberOfDigit++; // Move one position after read
     } else numberOfDigit--; // Move back one position, which means digit removed
@@ -202,20 +208,42 @@ void Passcode::push(int button) {
 
 bool Passcode::valid() {
     // Check if the digits match with the password
-    bool isValid = (digit1 == SECRET1 && digit2 == SECRET2 &&
-            digit3 == SECRET3 && digit4 == SECRET4);
+    bool isValid = (digit1 == SECRET_DIGIT1 && digit2 == SECRET_DIGIT2 &&
+            digit3 == SECRET_DIGIT3 && digit4 == SECRET_DIGIT4);
 
     // Reset the passcode after validity check
+    digit1 = -1;
+    digit2 = -1;
+    digit3 = -1;
+    digit4 = -1;
     numberOfDigit = 0;
+
     return isValid;
 }
 
 void Passcode::operator--() {
-    // Shift digits to the right, erasing the most recent entry
-    digit4 = digit3;
-    digit3 = digit2;
-    digit2 = digit1;
-    digit1 = -1;
+    // Check if at least one digit have been introduced
+    if (numberOfDigit > 0) {
+        // Remove the most recent digit
+        numberOfDigit --;
+        switch (numberOfDigit) {
+        case 0:
+            digit1 = -1;
+        break;
+        case 1:
+            digit2 = -1;
+        break;
+        case 2:
+            digit3 = -1;
+        break;
+        case 3:
+            digit4 = -1;
+        break;
+
+        default:
+            break;
+        }
+    }
 }
 
 /**
@@ -257,16 +285,72 @@ void function4(){
     std::cout << iPhone.valid() << std::endl;
     std::cout << "Expected: true" << std::endl;
 
+    // Other tests
+    std::cout << "Other tests" << std::endl;
+    Passcode Nokia;
+    Nokia.push(0);
+    Nokia.push(1);
+    Nokia.push(2);
+    Nokia.push(3);
+    --Nokia;  // Removes the last digit (3)
+    std::cout << Nokia.valid() << std::endl;
+    std::cout << "Expected: false" << std::endl;
+
     Passcode Samsung;
-    std::cout << Samsung.valid() << std::endl;  // Should be false because no digits are entered yet
+    Samsung.push(0);
+    Samsung.push(1);
+    Samsung.push(2);
+    Samsung.push(4);
+    --Samsung;  // Removes the last digit (4)
+    Samsung.push(3);  // Enters the last digit of the secret code
+    std::cout << Samsung.valid() << std::endl;
+    std::cout << "Expected: true" << std::endl;
+
+    Passcode Motorola;
+    Motorola.push(9);
+    Motorola.push(8);
+    Motorola.push(7);
+    Motorola.push(6);
+    --Motorola; // Remove all the last digits
+    --Motorola;
+    --Motorola;
+    --Motorola;
+    Motorola.push(0);  // Enters the correct code in the empty space
+    Motorola.push(1);
+    Motorola.push(2);
+    Motorola.push(3);
+    std::cout << Motorola.valid() << std::endl;
+    std::cout << "Expected: true" << std::endl;
+
+    Passcode Sony;
+    Sony.push(0);
+    Sony.push(0);
+    Sony.push(0);
+    Sony.push(0);
+    std::cout << Sony.valid() << std::endl;
+    std::cout << "Expected: false" << std::endl;
+
+    Passcode Huawei;
+    --Huawei; // Test when there is nothing to remove
+    Huawei.push(8);
+    --Huawei; // Test for remove one number
+    Huawei.push(0);
+    Huawei.push(1);
+    Huawei.push(2); 
+    Huawei.push(3);
+    std::cout << Huawei.valid() << std::endl;
+    std::cout << "Expected: true" << std::endl;
+
+    Passcode Blackberry;
+    std::cout << Blackberry.valid() << std::endl; // Test for empty code
     std::cout << "Expected: false" << std::endl;
 
     std::cout << "---   End Function 4 ---" << std::endl;
 }
 
 /**
- * Acts as the program's starting point, allowing the user to select and run one of four preovious functions.
- * Depending on the number the user introduces (1-4), the associated function is executed.
+ * Acts as the program starting point, allowing the user to select and run one of four preovious functions.
+ * Depending on the number the user introduces from 1 to 4, the associated function is executed.
  * If the input is outside the valid range, no action is taken and the execution stops.
 */
 int main() {
