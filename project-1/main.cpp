@@ -170,6 +170,7 @@ private:
     int digit2 = -1;
     int digit3 = -1;
     int digit4 = -1;
+    int numberOfDigit = 0;
 
     // Secret code
     static const int SECRET1 = 0;
@@ -179,11 +180,24 @@ private:
 };
 
 void Passcode::push(int button) {
-    // Shift digits to the left to make room for the new digit
-    digit1 = digit2;
-    digit2 = digit3;
-    digit3 = digit4;
-    digit4 = button;
+    // Assign digits to their corresponding place 
+    if (numberOfDigit < 4) {
+        switch (numberOfDigit) {
+        case 0:
+            digit1 = button;
+        break;
+        case 1:
+            digit2 = button;
+        break;
+        case 2:
+            digit3 = button;
+        break;
+        case 3:
+            digit4 = button;
+        break;
+        }
+        numberOfDigit++; // Move one position after read
+    } else numberOfDigit--; // Move back one position, which means digit removed
 }
 
 bool Passcode::valid() {
@@ -192,11 +206,7 @@ bool Passcode::valid() {
             digit3 == SECRET3 && digit4 == SECRET4);
 
     // Reset the passcode after validity check
-    digit1 = -1;
-    digit2 = -1;
-    digit3 = -1;
-    digit4 = -1;
-
+    numberOfDigit = 0;
     return isValid;
 }
 
@@ -246,7 +256,7 @@ void function4(){
     iPhone.push(3);
     std::cout << iPhone.valid() << std::endl;
     std::cout << "Expected: true" << std::endl;
-    
+
     Passcode Samsung;
     std::cout << Samsung.valid() << std::endl;  // Should be false because no digits are entered yet
     std::cout << "Expected: false" << std::endl;
