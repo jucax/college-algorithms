@@ -11,25 +11,41 @@ using namespace std;
 class StudentGrades {
 public:
     // Syllabus variables
-    // Individual Score Variables
-    double perrusalPoints = 0.0, participationPoints = 0.0, algorithmsAppPoints = 0.0, interviewPoints = 0.0, extraCreditPoints = 0.0;
+        // Individual Score Variables
+        double perrusalPoints = 0.0, participationPoints = 0.0, algorithmsAppPoints = 0.0, interviewPoints = 0.0, extraCreditPoints = 0.0;
 
-    // Exams points
-    double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0;
+        // Exams points
+        double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0;
 
-    int preAssesmentQuestions = 0, replacedExam = 0;
-    
-    // Multiple Score Variables
-    // Assignments 
-    vector<double> possibleAssignmentsPoints = vector<double>(6, 0.0);
-    vector<double> assignmentsPoints = vector<double>(6, 0.0);
-    vector<int> ontimeBonus = vector<int>(6, 0);
-    vector<int> lateSubmissions = vector<int>(6, 0);
+        int preAssesmentQuestions = 0, replacedExam = 0;
+        
+        // Multiple Score Variables
+        // Assignments 
+        vector<double> possibleAssignmentsPoints = vector<double>(6, 0.0);
+        vector<double> assignmentsPoints = vector<double>(6, 0.0);
+        vector<int> ontimeBonus = vector<int>(6, 0);
+        vector<int> lateSubmissions = vector<int>(6, 0);
 
-    // Projects
-    vector<double> projectsPoints = vector<double>(4, 0.0);
-    vector<double> projectPenalties = vector<double>(4, 0.0);
-    vector<int> daysLateProjectsSubmissions = vector<int>(4, 0);
+        // Projects
+        vector<double> projectsPoints = vector<double>(4, 0.0);
+        vector<double> projectPenalties = vector<double>(4, 0.0);
+        vector<int> daysLateProjectsSubmissions = vector<int>(4, 0);
+
+    // Final category scores
+        double finalPerusall = 0.0;
+        double finalParticipation = 0.0;
+        double finalAssignments = 0.0;
+        double finalProjects = 0.0;
+        double finalAlgorithmsApp = 0.0;
+        double finalPrerequisiteAssessment = 0.0;
+        double finalTextExam1 = 0.0;
+        double finalCppExam = 0.0;
+        double finalTextExam2 = 0.0;
+        double finalInterview = 0.0;
+        double finalFinalExam = 0.0;
+        double finalBonus = 0.0;
+
+        double finalGrade = 0.0;  
 };
 
 // Reading file function
@@ -97,12 +113,58 @@ void readFile(string filename, StudentGrades& student) {
     fin >> student.extraCreditPoints; // Bonus
 }
 
+
 // Calculate grade function
 void calculateGrade (StudentGrades& student) {
+    // Final Perrusal Grade
+    if (student.perrusalPoints >= 2.5) {
+        student.finalPerusall = 4.0;
+    } else if (student.perrusalPoints >= 2.0) {
+        student.finalPerusall = 3.0;
+    } else if (student.perrusalPoints >= 1.5) {
+        student.finalPerusall = 2.0;
+    } else if (student.perrusalPoints >= 1.0) {
+        student.finalPerusall = 1.0;
+    } else {
+        student.finalPerusall = 0.0;
+    }
 
+    // Final Participation Grade
+    student.finalParticipation = (student.participationPoints * 3) / 100;
+
+    //  Final Assignments Grade 
+    double totalAssignmentScore = 0.0;
+    double totalPossiblePoints = 0.0;
+    for (int i = 0; i < 6; i++) {
+        if (student.possibleAssignmentsPoints[i] > 0) { // Avoid division by zero
+            // Helper variable to calculate the score of each assignment
+            double score = (student.assignmentsPoints[i] / student.possibleAssignmentsPoints[i]) * 100.0; 
+
+            // Check for on-time bonus
+            if (student.ontimeBonus[i] == 1) {
+                score += (0.05 * student.possibleAssignmentsPoints[i]);
+            }
+            // Check for late penalty 
+            if (student.lateSubmissions[i] == 1) {
+                score *= 0.5;
+            }
+
+            totalAssignmentScore += score;
+            totalPossiblePoints += 100.0; // Each assignment is normalized to 100%
+        }
+    }
+
+    // Normalize the total homework score to a percentage
+    if (totalPossiblePoints > 0) {
+        student.finalAssignments = (totalAssignmentScore / totalPossiblePoints) * 12.0; // Scale to 12% of final grade
+    } else {
+        student.finalAssignments = 0.0; // If no assignments were graded
+    }
+    
 }
 
-// Print final grade functio
+
+// Print final grade function
 void printFinalGrades (string filename, StudentGrades& student) {
     cout << "File: " << filename << endl;
     cout << "Perusall Readings: " << student.perrusalPoints << endl;
