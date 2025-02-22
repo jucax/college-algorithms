@@ -4,7 +4,7 @@
 #include <string>
 #include <sstream>
 #include <vector>
-
+#include <iomanip>
 
 using namespace std;
 
@@ -15,9 +15,9 @@ public:
         double perrusalPoints = 0.0, participationPoints = 0.0, algorithmsAppPoints = 0.0, interviewPoints = 0.0, extraCreditPoints = 0.0;
 
         // Exams points
-        double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0, preAssesmentQuestions = 0.0;
+        double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0, prereqAssesmentQuestions = 0.0;
 
-        int replacedExam = 0;
+        string gradeReplaced = "None";
         
         // Multiple Score Variables
         // Assignments 
@@ -37,7 +37,7 @@ public:
         double finalAssignments = 0.0;
         double finalProjects = 0.0;
         double finalAlgorithmsApp = 0.0;
-        double finalPrerequisiteAssessment = 0.0;
+        double finalPrereqAssessment = 0.0;
         double finalTextExam1 = 0.0;
         double finalCppExam = 0.0;
         double finalTextExam2 = 0.0;
@@ -47,6 +47,7 @@ public:
 
         double finalGrade = 0.0;  
 };
+
 
 // Reading file function
 void readFile(string filename, StudentGrades& student) {
@@ -104,13 +105,76 @@ void readFile(string filename, StudentGrades& student) {
     }
 
     fin >> student.algorithmsAppPoints; // Evaluation of Algorithms in an App
-    fin >> student.preAssesmentQuestions; // Prerequisite Assessment
+    fin >> student.prereqAssesmentQuestions; // Prerequisite Assessment
     fin >> student.textExam1Points; // Textbook Exam 1
     fin >> student.cppExamPoints; // C++ Exam
     fin >> student.textExam2Points; // Textbook Exam 2
     fin >> student.interviewPoints; // Whiteboard Coding Interview
     fin >> student.finalExamPoints; // Final Exam
     fin >> student.extraCreditPoints; // Bonus
+}
+
+
+// Replace grade function
+void replaceGrade (StudentGrades& student, double percPrereqAssessment, double percTextExam1,
+                  double percCppExam, double percTextExam2, double percInterview, double percFinalExam) {
+    
+    // Calculate lost points (higher is worse)
+    vector<double> timedAssesments = {
+        (4 - student.finalPrereqAssessment), // Prerequisite
+        (11 - student.finalTextExam1),   // Textbook Exam 1
+        (11 - student.finalCppExam),     // C++ Exam
+        (11 - student.finalTextExam2),   // Textbook Exam 2
+        (6 - student.finalInterview)     // Whiteboard Interview
+    };
+
+    bool gradeChanged = false; // Boolean flag to stop once the grade has changed
+
+    while (!gradeChanged) {
+        double maxLost = timedAssesments[0]; // Prerequisite as default
+        int indexOfMaxLost = 0;
+        // Find the timed assesment where the student lost more points
+        for (int i = 1; i < timedAssesments.size(); i++) {
+            if (maxLost < timedAssesments[i]) {
+                maxLost = timedAssesments[i];
+                indexOfMaxLost = i;
+            }
+        }
+
+        cout << maxLost << endl;
+        cout << indexOfMaxLost << endl;
+
+        // Find the percentage of the one with the max lost
+        double percentageOfMaxLost = (indexOfMaxLost == 1) ? percTextExam1 :
+                                     (indexOfMaxLost == 2) ? percCppExam :
+                                     (indexOfMaxLost == 3) ? percTextExam2 :
+                                     (indexOfMaxLost == 4) ? percInterview :
+                                     percPrereqAssessment; 
+        cout << percentageOfMaxLost << endl;
+        // Check if the percentage is lower than the one on the final 
+        if (percFinalExam > percentageOfMaxLost) {
+            switch (indexOfMaxLost) {
+                case 0: student.finalPrereqAssessment = (percFinalExam / 100) * 4; 
+                        student.gradeReplaced = "Prerequisite Assessment";
+                break;
+                case 1: student.finalTextExam1 = (percFinalExam / 100) * 11; 
+                        student.gradeReplaced = "Textbook Exam 1";
+                break;
+                case 2: student.finalCppExam = (percFinalExam / 100) * 11; 
+                        student.gradeReplaced = "C++ Exam";
+                break;
+                case 3: student.finalTextExam2 = (percFinalExam / 100) * 11; 
+                        student.gradeReplaced = "Textbook Exam 2";
+                break;
+                case 4: student.finalInterview = (percFinalExam / 100) * 6; 
+                        student.gradeReplaced = "Whiteboard Coding Interview";
+                break;
+            }
+            gradeChanged = true;
+        } else {
+            timedAssesments[indexOfMaxLost] = -100; //  Marked as checked
+        }
+    }
 }
 
 
@@ -133,9 +197,9 @@ void calculateGrade (StudentGrades& student) {
     student.finalParticipation = (student.participationPoints * 3) / 100;
 
     //  Final Assignments Grade 
-    double totalPointsEarned = 0.0;
-    double totalPointsPossible = 0.0;
-    double maxPenaltyWaived = 0.0;
+    double totalAssignmentsPointsEarned = 0.0;
+    double totalAssignmentsPointsPossible = 0.0;
+    double maxAssignmentsPenaltyWaived = 0.0;
 
     for (int i = 0; i < 6; i++) {
         // Helper variable to calculate the score of each assignment
@@ -150,18 +214,21 @@ void calculateGrade (StudentGrades& student) {
             double penalty = score * 0.5;
 
             // Track the highest penalty to waive
-            maxPenaltyWaived = max(maxPenaltyWaived, penalty);
+            maxAssignmentsPenaltyWaived = max(maxAssignmentsPenaltyWaived, penalty);
 
             score -= penalty;
         } 
 
-        totalPointsEarned += score;
-        totalPointsPossible += student.possibleAssignmentsPoints[i];
+        totalAssignmentsPointsEarned += score;
+        totalAssignmentsPointsPossible += student.possibleAssignmentsPoints[i];
     }
 
-    totalPointsEarned += maxPenaltyWaived;
-    student.finalAssignments = (totalPointsEarned / totalPointsPossible) * 12;
-    
+    totalAssignmentsPointsEarned += maxAssignmentsPenaltyWaived;
+    if (totalAssignmentsPointsPossible > 0) {
+        student.finalAssignments = (totalAssignmentsPointsEarned / totalAssignmentsPointsPossible) * 12;
+    } else {
+        student.finalAssignments = 0.0;
+    }
     
     // Total Projects Grade
     for (int i = 0; i < 4; i++) {
@@ -181,7 +248,7 @@ void calculateGrade (StudentGrades& student) {
     student.finalAlgorithmsApp = (student.algorithmsAppPoints * 8) / 100;
 
     // Total Prerequisite Assesment
-    student.finalPrerequisiteAssessment = (student.preAssesmentQuestions * 4) / 10;
+    student.finalPrereqAssessment = (student.prereqAssesmentQuestions * 4) / 10;
 
     // Total Exams
     student.finalTextExam1 = (student.textExam1Points * 11) / 100;
@@ -193,11 +260,25 @@ void calculateGrade (StudentGrades& student) {
     student.finalInterview = (student.interviewPoints * 6) / 12;
 
     // Grade Replacement
+    // Calculate percentage of timed assesments
+    double percPrereqAssessment = (student.finalPrereqAssessment / 4) * 100;
+    double percTextExam1 = (student.finalTextExam1 / 11) * 100;
+    double percCppExam = (student.finalCppExam / 11) * 100;
+    double percTextExam2 = (student.finalTextExam2 / 11) * 100;
+    double percInterview = (student.finalInterview / 6) * 100;
+    double percFinalExam = (student.finalFinalExam / 18) * 100;
 
+    // Calculate minimum percentage of timed assesments
+    double minPercentage = std::min({percPrereqAssessment, percTextExam1, percCppExam,percTextExam2, percInterview});
+
+    // Only call replaceGrade() if the final exam is NOT the one with the lowest percentage
+    if (percFinalExam > minPercentage) {
+        replaceGrade(student, percPrereqAssessment, percTextExam1, percCppExam, percTextExam2, percInterview, percFinalExam);
+    }
 
     // Final Grade Calculation
     student.finalGrade = student.finalPerusall + student.finalParticipation + student.finalAssignments +
-                         student.finalProjects + student.finalAlgorithmsApp + student.finalPrerequisiteAssessment +
+                         student.finalProjects + student.finalAlgorithmsApp + student.finalPrereqAssessment +
                          student.finalTextExam1 + student.finalCppExam + student.finalTextExam2 +
                          student.finalInterview + student.finalFinalExam + student.extraCreditPoints;
                          
@@ -206,22 +287,25 @@ void calculateGrade (StudentGrades& student) {
 
 // Print final grade function
 void printFinalGrades (string filename, StudentGrades& student) {
+    cout << fixed << setprecision(4);
+
     cout << "File: " << filename << endl;
     cout << "Perusall Readings: " << student.finalPerusall << endl;
     cout << "Classroom Participation: " << student.finalParticipation << endl;
     cout << "Homework Assignments: " << student.finalAssignments << endl;
     cout << "C++ Projects: " << student.finalProjects << endl;
     cout << "Evaluation of Algorithms in an App: " << student.finalAlgorithmsApp << endl;
-    cout << "Prerequisite Assessment: " << student.finalPrerequisiteAssessment << endl;
+    cout << "Prerequisite Assessment: " << student.finalPrereqAssessment << endl;
     cout << "Textbook Exam 1: " << student.finalTextExam1 << endl;
     cout << "C++ Exam: " << student.finalCppExam << endl;
     cout << "Textbook Exam 2: " << student.finalTextExam2 << endl;
     cout << "Whiteboard Coding Interview: " << student.finalInterview << endl;
     cout << "Final Exam: " << student.finalFinalExam << endl;
-    cout << "Final Exam Grade Replaced: " << endl;
+    cout << "Final Exam Grade Replaced: " << student.gradeReplaced << endl;
     cout << "Bonus: " << student.extraCreditPoints << endl;
     cout << "Final Grade: " << student.finalGrade << endl;
 }
+
 
 int main() {
     // Create a new Student object
