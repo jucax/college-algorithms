@@ -15,9 +15,9 @@ public:
         double perrusalPoints = 0.0, participationPoints = 0.0, algorithmsAppPoints = 0.0, interviewPoints = 0.0, extraCreditPoints = 0.0;
 
         // Exams points
-        double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0;
+        double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0, preAssesmentQuestions = 0.0;
 
-        int preAssesmentQuestions = 0, replacedExam = 0;
+        int replacedExam = 0;
         
         // Multiple Score Variables
         // Assignments 
@@ -133,82 +133,94 @@ void calculateGrade (StudentGrades& student) {
     student.finalParticipation = (student.participationPoints * 3) / 100;
 
     //  Final Assignments Grade 
-    double totalAssignmentScore = 0.0;
-    double totalPossiblePoints = 0.0;
+    double totalPointsEarned = 0.0;
+    double totalPointsPossible = 0.0;
+    double maxPenaltyWaived = 0.0;
+
     for (int i = 0; i < 6; i++) {
-        if (student.possibleAssignmentsPoints[i] > 0) { // Avoid division by zero
-            // Helper variable to calculate the score of each assignment
-            double score = (student.assignmentsPoints[i] / student.possibleAssignmentsPoints[i]) * 100.0; 
+        // Helper variable to calculate the score of each assignment
+        double score = student.assignmentsPoints[i]; 
 
-            // Check for on-time bonus
-            if (student.ontimeBonus[i] == 1) {
-                score += (0.05 * student.possibleAssignmentsPoints[i]);
-            }
-            // Check for late penalty 
-            if (student.lateSubmissions[i] == 1) {
-                score *= 0.5;
-            }
-
-            totalAssignmentScore += score;
-            totalPossiblePoints += 100.0; // Each assignment is normalized to 100%
+        // Check for on-time bonus
+        if (student.ontimeBonus[i] == 1) {
+            score += (0.05 * student.assignmentsPoints[i]);
         }
+        // Check for late penalty 
+        if (student.lateSubmissions[i] == 1) {
+            double penalty = score * 0.5;
+
+            // Track the highest penalty to waive
+            maxPenaltyWaived = max(maxPenaltyWaived, penalty);
+
+            score -= penalty;
+        } 
+
+        totalPointsEarned += score;
+        totalPointsPossible += student.possibleAssignmentsPoints[i];
     }
 
-    // Normalize the total homework score to a percentage
-    if (totalPossiblePoints > 0) {
-        student.finalAssignments = (totalAssignmentScore / totalPossiblePoints) * 12.0; // Scale to 12% of final grade
-    } else {
-        student.finalAssignments = 0.0; // If no assignments were graded
-    }
+    totalPointsEarned += maxPenaltyWaived;
+    student.finalAssignments = (totalPointsEarned / totalPointsPossible) * 12;
     
+    
+    // Total Projects Grade
+    for (int i = 0; i < 4; i++) {
+        double score = (student.projectsPoints[i] * 3) / 100; // Each project contributes with 3 points to the final grade
+
+        // Apply late penalty (20% per late day)
+        if (student.daysLateProjectsSubmissions[i] > 0) {
+            double penaltyFactor = 1.0 - (0.2 * student.daysLateProjectsSubmissions[i]);
+            if (penaltyFactor < 0) penaltyFactor = 0; // Prevent negative scores in case the project were delivered too late
+            score *= penaltyFactor;
+        }
+    
+    student.finalProjects += score;
+    }
+
+    // Total Algorithms App
+    student.finalAlgorithmsApp = (student.algorithmsAppPoints * 8) / 100;
+
+    // Total Prerequisite Assesment
+    student.finalPrerequisiteAssessment = (student.preAssesmentQuestions * 4) / 10;
+
+    // Total Exams
+    student.finalTextExam1 = (student.textExam1Points * 11) / 100;
+    student.finalCppExam = (student.cppExamPoints * 11) / 100;
+    student.finalTextExam2 = (student.textExam2Points * 11) / 100;
+    student.finalFinalExam = (student.finalExamPoints * 18) / 100;
+
+    // Total Whiteboard Coding Interview
+    student.finalInterview = (student.interviewPoints * 6) / 12;
+
+    // Grade Replacement
+
+
+    // Final Grade Calculation
+    student.finalGrade = student.finalPerusall + student.finalParticipation + student.finalAssignments +
+                         student.finalProjects + student.finalAlgorithmsApp + student.finalPrerequisiteAssessment +
+                         student.finalTextExam1 + student.finalCppExam + student.finalTextExam2 +
+                         student.finalInterview + student.finalFinalExam + student.extraCreditPoints;
+                         
 }
 
 
 // Print final grade function
 void printFinalGrades (string filename, StudentGrades& student) {
     cout << "File: " << filename << endl;
-    cout << "Perusall Readings: " << student.perrusalPoints << endl;
-    cout << "Classroom Participation: " << student.participationPoints << endl;
-    cout << "Possible Homework Assignments: " << endl;
-    for (int i = 0; i < student.possibleAssignmentsPoints.size(); i++) {
-        cout << student.possibleAssignmentsPoints[i] << " ";
-    }
-    cout << endl;
-    cout << "Homework Assignments: " << endl;
-    for (int i = 0; i < student.assignmentsPoints.size(); i++) {
-        cout << student.assignmentsPoints[i] << " ";
-    }
-    cout << endl;
-    cout << "Homework Assignments On-time: " << endl;
-    for (int i = 0; i < student.ontimeBonus.size(); i++) {
-        cout << student.ontimeBonus[i] << " ";
-    }
-    cout << endl;
-    cout << "Homework Assignments Late: " << endl;
-    for (int i = 0; i < student.lateSubmissions.size(); i++) {
-        cout << student.lateSubmissions[i] << " ";
-    }
-    cout << endl;
-    cout << "C++ Projects: " << endl;
-    for (int i = 0; i < student.projectsPoints.size(); i++) {
-        cout << student.projectsPoints[i] << " ";
-    }
-    cout << endl;
-    cout << "Days Late C++ Projects: " << endl;
-    for (int i = 0; i < student.daysLateProjectsSubmissions.size(); i++) {
-        cout << student.daysLateProjectsSubmissions[i] << " ";
-    }
-    cout << endl;
-    cout << "Evaluation of Algorithms in an App: " << student.algorithmsAppPoints << endl;
-    cout << "Prerequisite Assessment: " << student.preAssesmentQuestions << endl;
-    cout << "Textbook Exam 1: " << student.textExam1Points << endl;
-    cout << "C++ Exam: " << student.cppExamPoints << endl;
-    cout << "Textbook Exam 2: " << student.textExam2Points << endl;
-    cout << "Whiteboard Coding Interview: " << student.interviewPoints << endl;
-    cout << "Final Exam: " << student.finalExamPoints << endl;
+    cout << "Perusall Readings: " << student.finalPerusall << endl;
+    cout << "Classroom Participation: " << student.finalParticipation << endl;
+    cout << "Homework Assignments: " << student.finalAssignments << endl;
+    cout << "C++ Projects: " << student.finalProjects << endl;
+    cout << "Evaluation of Algorithms in an App: " << student.finalAlgorithmsApp << endl;
+    cout << "Prerequisite Assessment: " << student.finalPrerequisiteAssessment << endl;
+    cout << "Textbook Exam 1: " << student.finalTextExam1 << endl;
+    cout << "C++ Exam: " << student.finalCppExam << endl;
+    cout << "Textbook Exam 2: " << student.finalTextExam2 << endl;
+    cout << "Whiteboard Coding Interview: " << student.finalInterview << endl;
+    cout << "Final Exam: " << student.finalFinalExam << endl;
     cout << "Final Exam Grade Replaced: " << endl;
     cout << "Bonus: " << student.extraCreditPoints << endl;
-    cout << "Final Grade: " << endl;
+    cout << "Final Grade: " << student.finalGrade << endl;
 }
 
 int main() {
@@ -217,7 +229,7 @@ int main() {
     string filename = "examplefromdranthony.txt";
 
     readFile(filename, student);
-    // calculateGrade(student);
+    calculateGrade(student);
     printFinalGrades(filename, student);
 }
     
