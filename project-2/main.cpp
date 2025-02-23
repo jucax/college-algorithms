@@ -73,7 +73,10 @@ void readFile(string filename, StudentGrades& student) {
 
     // Read and assign values
     fin >> student.perrusalPoints; // Perusall Readings
+    student.perrusalPoints = max(0.0, min(student.perrusalPoints, 3.0)); // Ensure range [0,3]
+
     fin >> student.participationPoints; // Classroom Participation
+    student.participationPoints = max(0.0, min(student.participationPoints, 100.0)); // Ensure range [0,100]
 
     // Read the possible assignment points, line of 6 numbers
     for (int i = 0; i < 6; i++) {
@@ -115,11 +118,16 @@ void readFile(string filename, StudentGrades& student) {
     }
 
     fin >> student.algorithmsAppPoints; // Read grade of algorithms in an app
+    student.algorithmsAppPoints = max(0.0, min(student.algorithmsAppPoints, 100.0)); // Ensure range [0,100]
+
     fin >> student.prereqAssesmentQuestions; // Read grade prerequisite Assessment
     fin >> student.textExam1Points; // Read grade textbook Exam 1
     fin >> student.cppExamPoints; // Read grade C++ Exam
     fin >> student.textExam2Points; // Read grade textbook Exam 2
+
     fin >> student.interviewPoints; // Read grade whiteboard coding interview
+    student.interviewPoints = std::max(0.0, std::min(student.interviewPoints, 12.0)); // Ensure range [0,12]
+
     fin >> student.finalExamPoints; // Read grade final fxam
     fin >> student.extraCreditPoints; // Read bonus points
 }
@@ -353,7 +361,13 @@ int main() {
     vector <string> filenames = {
         "examplefromdranthony.txt",
         "allZeroes.txt",
-        "perfectGrades.txt"
+        "test1.txt",
+        "test2.txt",
+        "test3.txt",
+        "test4.txt",
+        "test5.txt",
+        "test6.txt",
+        "test7.txt"
     };
 
      for (const string& filename : filenames) {
