@@ -15,9 +15,7 @@ public:
         double perrusalPoints = 0.0, participationPoints = 0.0, algorithmsAppPoints = 0.0, interviewPoints = 0.0, extraCreditPoints = 0.0;
 
         // Exams points
-        double textExam1Points = 0.0, textExam2Points = 0.0, cppExamPoints = 0.0, finalExamPoints = 0.0, prereqAssesmentQuestions = 0.0;
-
-        string gradeReplaced = "None";
+        double prereqAssesmentQuestions = 0.0, textExam1Points = 0.0, cppExamPoints = 0.0, textExam2Points = 0.0, finalExamPoints = 0.0;
         
         // Multiple Score Variables
         // Assignments 
@@ -28,10 +26,12 @@ public:
 
         // Projects
         vector<double> projectsPoints = vector<double>(4, 0.0);
-        vector<double> projectPenalties = vector<double>(4, 0.0);
         vector<int> daysLateProjectsSubmissions = vector<int>(4, 0);
 
-    // Final category scores
+        // Grade replaced variable
+        string gradeReplaced = "None";
+
+    // Final grades 
         double finalPerusall = 0.0;
         double finalParticipation = 0.0;
         double finalAssignments = 0.0;
@@ -49,14 +49,24 @@ public:
 };
 
 
-// Reading file function
+/**
+ * The readFile function reads a structured text file containing student grades for each element that is part 
+ * of the final grade and stores the values into the corresponding variables with in the `StudentGrades` object. 
+ * The file must follow a specific format and if the file does not exist or fails to open, the program exits with 
+ * an error message.
+ *
+ * @param filename The name of the text file containing the student grade data.
+ * @param student The reference to the StudentGrades object where the data will be stored.
+ *
+ * @throws Exits the program if the specified file does not exist or cannot be opened.
+ */
 void readFile(string filename, StudentGrades& student) {
     ifstream fin;
     fin.open(filename);
 
     // Throw error and exit if examplefromdranthony.txt is not found
     if (fin.fail()) {
-        cerr << "The file \"examplefromdranthony.txt\" does not exist. Exiting."
+        cerr << "The file" << filename << "does not exist. Exiting."
                   << endl;
         exit(1);
     }
@@ -65,12 +75,12 @@ void readFile(string filename, StudentGrades& student) {
     fin >> student.perrusalPoints; // Perusall Readings
     fin >> student.participationPoints; // Classroom Participation
 
-    // Read the possible assignment points line of 6 numbers
+    // Read the possible assignment points, line of 6 numbers
     for (int i = 0; i < 6; i++) {
         fin >> student.possibleAssignmentsPoints[i];
     }
 
-    // Read the actual assignment points line of 6 numbers
+    // Read the actual assignment points, line of 6 numbers
     for (int i = 0; i < 6; i++) {
         fin >> student.assignmentsPoints[i];
     }
@@ -78,7 +88,7 @@ void readFile(string filename, StudentGrades& student) {
     // On time bonus
     fin.ignore();  // Ignore newline before reading full lines
 
-    // 🔹 Read On-Time Bonuses with a 0/1 structure
+    // Read On-Time Bonuses with a 0|1 structure
     string line;
     getline(fin, line);
     stringstream ssBonus(line);
@@ -87,7 +97,7 @@ void readFile(string filename, StudentGrades& student) {
         student.ontimeBonus[bonus - 1] = 1; // Convert 1-based to 0-based index
     }
 
-    //Submit late
+    // Late penalties
     getline(fin, line);
     stringstream ssLate(line);
     int late;
@@ -95,37 +105,50 @@ void readFile(string filename, StudentGrades& student) {
         student.lateSubmissions[late - 1] = 1; // Convert 1-based to 0-based index
     }
 
-    // Read the project points line of 4 numbers
+    // Read the project points, line of 4 numbers
     for (int i = 0; i < 4; i++) {
         fin >> student.projectsPoints[i];
     }
-    // Read the numbers of days late for projects line of 4 numbers
+    // Read the number of days late for projects, line of 4 numbers
     for (int i = 0; i < 4; i++) {
         fin >> student.daysLateProjectsSubmissions[i];
     }
 
-    fin >> student.algorithmsAppPoints; // Evaluation of Algorithms in an App
-    fin >> student.prereqAssesmentQuestions; // Prerequisite Assessment
-    fin >> student.textExam1Points; // Textbook Exam 1
-    fin >> student.cppExamPoints; // C++ Exam
-    fin >> student.textExam2Points; // Textbook Exam 2
-    fin >> student.interviewPoints; // Whiteboard Coding Interview
-    fin >> student.finalExamPoints; // Final Exam
-    fin >> student.extraCreditPoints; // Bonus
+    fin >> student.algorithmsAppPoints; // Read grade of algorithms in an app
+    fin >> student.prereqAssesmentQuestions; // Read grade prerequisite Assessment
+    fin >> student.textExam1Points; // Read grade textbook Exam 1
+    fin >> student.cppExamPoints; // Read grade C++ Exam
+    fin >> student.textExam2Points; // Read grade textbook Exam 2
+    fin >> student.interviewPoints; // Read grade whiteboard coding interview
+    fin >> student.finalExamPoints; // Read grade final fxam
+    fin >> student.extraCreditPoints; // Read bonus points
 }
 
 
-// Replace grade function
+/**
+ * The replaceGrade function identifies the timed assessment where the student lost the most points to determine
+ * which grade would most benefit the student if replaced by the final exam grade. Then it checks if the final exam percentage
+ * is higher than the selected timed assessment percentage, if it is, the corresponding assessment grade is updated, 
+ * if it is not, try with the following best option.
+ *
+ * @param student The reference to the StudentGrades object containing the final grades.
+ * @param percPrereqAssessment The percentage score of the Prerequisite Assessment.
+ * @param percTextExam1 The percentage score of the Textbook Exam 1.
+ * @param percCppExam The percentage score of the C++ Exam.
+ * @param percTextExam2 The percentage score of the Textbook Exam 2.
+ * @param percInterview The percentage score of the Whiteboard Coding Interview.
+ * @param percFinalExam The percentage score of the Final Exam.
+ */
 void replaceGrade (StudentGrades& student, double percPrereqAssessment, double percTextExam1,
                   double percCppExam, double percTextExam2, double percInterview, double percFinalExam) {
     
     // Calculate lost points (higher is worse)
     vector<double> timedAssesments = {
-        (4 - student.finalPrereqAssessment), // Prerequisite
-        (11 - student.finalTextExam1),   // Textbook Exam 1
-        (11 - student.finalCppExam),     // C++ Exam
-        (11 - student.finalTextExam2),   // Textbook Exam 2
-        (6 - student.finalInterview)     // Whiteboard Interview
+        (4 - student.finalPrereqAssessment),
+        (11 - student.finalTextExam1), 
+        (11 - student.finalCppExam), 
+        (11 - student.finalTextExam2),
+        (6 - student.finalInterview) 
     };
 
     bool gradeChanged = false; // Boolean flag to stop once the grade has changed
@@ -133,24 +156,22 @@ void replaceGrade (StudentGrades& student, double percPrereqAssessment, double p
     while (!gradeChanged) {
         double maxLost = timedAssesments[0]; // Prerequisite as default
         int indexOfMaxLost = 0;
+
         // Find the timed assesment where the student lost more points
         for (int i = 1; i < timedAssesments.size(); i++) {
-            if (maxLost < timedAssesments[i]) {
+            if (timedAssesments[i] > maxLost) {
                 maxLost = timedAssesments[i];
                 indexOfMaxLost = i;
             }
         }
 
-        cout << maxLost << endl;
-        cout << indexOfMaxLost << endl;
-
-        // Find the percentage of the one with the max lost
+        // Find the percentage of the one with the max lost points
         double percentageOfMaxLost = (indexOfMaxLost == 1) ? percTextExam1 :
                                      (indexOfMaxLost == 2) ? percCppExam :
                                      (indexOfMaxLost == 3) ? percTextExam2 :
                                      (indexOfMaxLost == 4) ? percInterview :
                                      percPrereqAssessment; 
-        cout << percentageOfMaxLost << endl;
+
         // Check if the percentage is lower than the one on the final 
         if (percFinalExam > percentageOfMaxLost) {
             switch (indexOfMaxLost) {
@@ -178,7 +199,16 @@ void replaceGrade (StudentGrades& student, double percPrereqAssessment, double p
 }
 
 
-// Calculate grade function
+/**
+ * The calculateGrade function processes the points obtained by the student in each element, applies necessary 
+ * penalties and bonuses, and computes the final grade based on the grading structure provided in the syllabus. 
+ * It calculates individual weighted contributions from each of the components of the final grade.
+ * 
+ * The function also determines if the final exam score should replace the lowest timed assessment score
+ * and which of the assignments replace in order to benefit the student more.
+ *
+ * @param student The reference to the StudentGrades object containing points and where the final calculated values will be stored.
+ */
 void calculateGrade (StudentGrades& student) {
     // Final Perrusal Grade
     if (student.perrusalPoints >= 2.5) {
@@ -206,9 +236,8 @@ void calculateGrade (StudentGrades& student) {
         double score = student.assignmentsPoints[i]; 
 
         // Check for on-time bonus
-        if (student.ontimeBonus[i] == 1) {
-            score += (0.05 * student.assignmentsPoints[i]);
-        }
+        if (student.ontimeBonus[i] == 1) score += (0.05 * student.assignmentsPoints[i]);
+
         // Check for late penalty 
         if (student.lateSubmissions[i] == 1) {
             double penalty = score * 0.5;
@@ -218,13 +247,16 @@ void calculateGrade (StudentGrades& student) {
 
             score -= penalty;
         } 
-
         totalAssignmentsPointsEarned += score;
+
+        // Calculate possible points
         totalAssignmentsPointsPossible += student.possibleAssignmentsPoints[i];
     }
 
+    // Add the penalty waived to the points earned
     totalAssignmentsPointsEarned += maxAssignmentsPenaltyWaived;
-    if (totalAssignmentsPointsPossible > 0) {
+
+    if (totalAssignmentsPointsPossible > 0) { // Check to avoid division by 0
         student.finalAssignments = (totalAssignmentsPointsEarned / totalAssignmentsPointsPossible) * 12;
     } else {
         student.finalAssignments = 0.0;
@@ -260,21 +292,21 @@ void calculateGrade (StudentGrades& student) {
     student.finalInterview = (student.interviewPoints * 6) / 12;
 
     // Grade Replacement
-    // Calculate percentage of timed assesments
-    double percPrereqAssessment = (student.finalPrereqAssessment / 4) * 100;
-    double percTextExam1 = (student.finalTextExam1 / 11) * 100;
-    double percCppExam = (student.finalCppExam / 11) * 100;
-    double percTextExam2 = (student.finalTextExam2 / 11) * 100;
-    double percInterview = (student.finalInterview / 6) * 100;
-    double percFinalExam = (student.finalFinalExam / 18) * 100;
+        // Calculate percentage of timed assesments
+        double percPrereqAssessment = (student.finalPrereqAssessment / 4) * 100;
+        double percTextExam1 = (student.finalTextExam1 / 11) * 100;
+        double percCppExam = (student.finalCppExam / 11) * 100;
+        double percTextExam2 = (student.finalTextExam2 / 11) * 100;
+        double percInterview = (student.finalInterview / 6) * 100;
+        double percFinalExam = (student.finalFinalExam / 18) * 100;
 
-    // Calculate minimum percentage of timed assesments
-    double minPercentage = std::min({percPrereqAssessment, percTextExam1, percCppExam,percTextExam2, percInterview});
+        // Calculate minimum percentage of timed assesments
+        double minPercentage = min({percPrereqAssessment, percTextExam1, percCppExam,percTextExam2, percInterview});
 
-    // Only call replaceGrade() if the final exam is NOT the one with the lowest percentage
-    if (percFinalExam > minPercentage) {
-        replaceGrade(student, percPrereqAssessment, percTextExam1, percCppExam, percTextExam2, percInterview, percFinalExam);
-    }
+        // Only call replaceGrade() if the final exam is NOT the one with the lowest percentage
+        if (percFinalExam > minPercentage) {
+            replaceGrade(student, percPrereqAssessment, percTextExam1, percCppExam, percTextExam2, percInterview, percFinalExam);
+        }
 
     // Final Grade Calculation
     student.finalGrade = student.finalPerusall + student.finalParticipation + student.finalAssignments +
@@ -285,7 +317,16 @@ void calculateGrade (StudentGrades& student) {
 }
 
 
-// Print final grade function
+/**
+ * @brief Prints the final calculated grades for a student in a formatted manner.
+ *
+ * The printFinalGrades function prints a final report that contains all the elements and it's contributions 
+ * to the final grade, formatted to four decimal places for precision. Additionally, it reports if any grade 
+ * component was replaced by the final exam. And print the final grade including all bonuses and penalties.
+ *
+ * @param filename The name of the text file from which the student's grades were loaded.
+ * @param student The reference to the StudentGrades object containing the final grades.
+ */
 void printFinalGrades (string filename, StudentGrades& student) {
     cout << fixed << setprecision(4);
 
@@ -308,12 +349,21 @@ void printFinalGrades (string filename, StudentGrades& student) {
 
 
 int main() {
-    // Create a new Student object
-    StudentGrades student;
-    string filename = "examplefromdranthony.txt";
+    // Vector to read text files
+    vector <string> filenames = {
+        "examplefromdranthony.txt",
+        "allZeroes.txt",
+        "perfectGrades.txt"
+    };
 
-    readFile(filename, student);
-    calculateGrade(student);
-    printFinalGrades(filename, student);
+     for (const string& filename : filenames) {
+        StudentGrades student; // Reset student data for each file
+
+        readFile(filename, student);
+        calculateGrade(student);
+        printFinalGrades(filename, student);
+
+        cout << "---------------------------------------\n"; // Separator for readability
+    }
 }
     
