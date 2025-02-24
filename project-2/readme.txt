@@ -157,7 +157,7 @@ Test Cases:
         Final Exam Grade Replaced: None
         Bonus: 0.0000
         Final Grade: 100.0000
-        Why?: Ensures correct handling of maximum scores across all components.
+        Why?: Test file with perfect grades. Ensures correct handling of maximum scores across all components.
 
     4.  Input: test2.txt
         3
@@ -368,3 +368,12 @@ Test Cases:
         Bonus: 0.0000
         Final Grade: 97.0000
         Why?: Test file verifying that values fall within their specified ranges. This includes out-of-range inputs such as a Perusall score of 6, negative participation points, scores above 100 for Algorithms in an App, and a Whiteboard Interview score of -1. The Whiteboard Interview score should be counted as 0, and the program should replace it with the Final Exam percentage following the grade replacement logic.
+
+
+    Collaboration, Resources, AI Usage:
+        No collaboration
+        No other resources were used
+        No IA was used
+
+    Honor Code:
+        “I have acted with honesty and integrity in producing this work and am unaware of anyone who has not.”

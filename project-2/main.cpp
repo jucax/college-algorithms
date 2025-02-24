@@ -126,10 +126,11 @@ void readFile(string filename, StudentGrades& student) {
     fin >> student.textExam2Points; // Read grade textbook Exam 2
 
     fin >> student.interviewPoints; // Read grade whiteboard coding interview
-    student.interviewPoints = std::max(0.0, std::min(student.interviewPoints, 12.0)); // Ensure range [0,12]
+    student.interviewPoints = max(0.0, min(student.interviewPoints, 12.0)); // Ensure range [0,12]
 
     fin >> student.finalExamPoints; // Read grade final fxam
     fin >> student.extraCreditPoints; // Read bonus points
+    student.extraCreditPoints = max(0.0, student.extraCreditPoints); // Ensure no negative extra points
 }
 
 
@@ -309,7 +310,8 @@ void calculateGrade (StudentGrades& student) {
         double percFinalExam = (student.finalFinalExam / 18) * 100;
 
         // Calculate minimum percentage of timed assesments
-        double minPercentage = min({percPrereqAssessment, percTextExam1, percCppExam,percTextExam2, percInterview});
+        double minPercentage = min(min(percPrereqAssessment, percTextExam1),
+        min(min(percCppExam, percTextExam2), percInterview));
 
         // Only call replaceGrade() if the final exam is NOT the one with the lowest percentage
         if (percFinalExam > minPercentage) {
@@ -355,7 +357,11 @@ void printFinalGrades (string filename, StudentGrades& student) {
     cout << "Final Grade: " << student.finalGrade << endl;
 }
 
-
+/**
+ * The main function iterates through a predefined list of filenames, reading student grade data, 
+ * calculating final grades, and then printing the results. Each file is processed independently, 
+ * ensuring new student data for each iteration.
+ */
 int main() {
     // Vector to read text files
     vector <string> filenames = {
