@@ -383,7 +383,7 @@ int main() {
         calculateGrade(student);
         printFinalGrades(filename, student);
 
-        cout << "---------------------------------------\n"; // Separator for readability
+        cout << "---------------------------------------\n"; // Separator between files
     }
 }
     
