@@ -377,7 +377,7 @@ int main() {
     };
 
      for (const string& filename : filenames) {
-        StudentGrades student; // Reset student data for each file
+        StudentGrades student; // Reset student data for each data file
 
         readFile(filename, student);
         calculateGrade(student);
