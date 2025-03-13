@@ -13,15 +13,14 @@ Files submitted:
     - numbers6.txt – A test file containing no numbers.
 
 High-Level Overview:
-    1. function1
-        This function1 reads characters from the input and counts how often each symbol appears within a specific ASCII range, from '!' (33) to '@' (64). It uses a fixed-size array to store the appearances of each character in this range. The function stops reading  as soon as it encounters a character outside this range, then it prints all the symbols in the range, along with the count of each symbol.
+    1. readFile function
+        This function reads a structured data file containing student grades and stores the values in a StudentGrades object. The file follows a strict format to read each component of the final grade. It also accounts for on-time bonuses and late penalties by processing assignment submissions.
 
-        To link each character to the correct position in the array, the function uses ASCII decimal positions. It subtracts the ASCII value of '!' from the ASCII value of the character, which gives the exact index for that character in the array. This avoids the need for more complex structures. The 'symbolsCount' array starts with all values set to zero and gets updated as the function reads and processes each character from the input.
+        To handle on-time and late submissions, the function reads space-separated indices and converts them from 1-based to 0-based indexing for correct mapping in the StudentGrades structure.
 
         Efficiency Considerations:
-            - Time Complexity: The function1 processes n input characters in O(n) time, as each character is read, checked, and mapped to an array index. The final step, which prints the counts of the symbols, runs in O(1) time since the array size is fixed at 32 spaces (range from 33 to 64). The dominant operation is n, so in general this function runs in O(n) time. 
-                Best & Worst case: O(n)
-            - Space Complexity: The function1 requires constant space O(1) as it uses a fixed-size array of 32 integers. There’s no need for dynamic memory allocation or extra data structures.
+            - Time Complexity: O(n), where n is the number of values in the file. Each value is read sequentially.
+            - Space Complexity:  O(1), since data is stored in a fixed-structure StudentGrades object without dynamic memory allocation.
 
     2. decreasingSeparatedCopies function & function2
         The 'decreasingSeparatedCopies' function creates a string by gradually shortening the input 'word' and inserting characters from the 'separators' string between each shortened copy. This process repeats until either the specified number of copies 'count' is reached or the 'word' has no more characters remaining. If the separators string doesn’t have enough characters, it loops back to the first character.

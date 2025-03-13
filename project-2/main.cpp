@@ -373,7 +373,8 @@ int main() {
         "test4.txt",
         "test5.txt",
         "test6.txt",
-        "test7.txt"
+        "test7.txt",
+        "personalGrades.txt"
     };
 
      for (const string& filename : filenames) {
