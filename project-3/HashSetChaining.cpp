@@ -7,41 +7,95 @@ HashSetChaining::HashSetChaining() :
 { }
 
 int HashSetChaining::getSize() const {
-    return -1;
+    int count = 0;
+    for (const std::list <int>& bucket : hashTable) {
+        count += bucket.size();
+    }
+    return count;
 }
 
 int HashSetChaining::getTableSize() const {
-    return -1;
+    return hashTable.size();
 }
 
 double HashSetChaining::getLoadFactor() const {
-    return -1.0;
+    return static_cast<double>(getSize() / getTableSize());
 }
 
 void HashSetChaining::printSet() const {
-
+    for (const std::list <int>& bucket : hashTable) {
+        for (int element : bucket){
+            std::cout << element << " ";
+        }
+    }
+    std::cout << std::endl;
 }
 
 void HashSetChaining::printTable() const {
-    
+    for (const std::list <int>& bucket : hashTable) {
+        if (bucket.empty()) std::cout << "-";
+        else {
+            bool first = true; // Print -> before the elements, except for the first one 
+            for (int element : bucket) {
+                if (!first) std::cout << "->";
+                std::cout << element;
+                first = false;
+            }
+        }
+        std::cout << " ";
+    }
+    std::cout << std::endl;
 }
 
 int HashSetChaining::contains(int value) {
-    return -1;
+    int index = computeHash(value);
+    const std::list<int>& bucket = hashTable[index];
+
+    for (int element : bucket) {
+        if (element == value) {
+            return index;  // Found the value at this bucket
+        }
+    }
+
+    return -1;  // Value not found
 }
 
 bool HashSetChaining::insert(int value) {
-    return false;
+    // Check if value is in the set
+    if (contains(value) != -1) {
+        return false;
+    }
+
+    int index = computeHash(value);
+    hashTable[index].push_back(value);  // Add to the end 
+
+    // Check for load factor in case we need to rehash
+    if (getLoadFactor() > MAX_LOAD_FACTOR) {
+        resizeTable(hashTable.size() * 2);
+    }
+
+    return true;
 }
 
 void HashSetChaining::resizeTable(int newSize) {
+    std::vector<std::list<int>> newBiggerTable(newSize);
 
+    for (const std::list<int>& bucket : hashTable) {
+        for (int element : bucket) {
+            int newIndex = element % newSize;  // Calculate new hash index
+            newBiggerTable[newIndex].push_back(element);
+        }
+    }
+
+    hashTable = std::move(newBiggerTable);  // Replace tables
 }
 
 bool HashSetChaining::remove(int value) {
-    return false;
+    int index = computeHash(value);
+    hashTable[index].push_back(value);  // Add to the end
+
 }
 
 int HashSetChaining::computeHash(int value) const {
-    return -1;
+    return value % hashTable.size();
 }

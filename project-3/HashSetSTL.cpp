@@ -3,8 +3,8 @@
 #include <algorithm>
 #include <iostream>
 
-HashSetSTL::HashSetSTL()
-    : hashSet(INITIAL_HASHTABLE_SIZE)
+HashSetSTL::HashSetSTL(): 
+    hashSet(INITIAL_HASHTABLE_SIZE)
 { }
 
 int HashSetSTL::getSize() const {
@@ -44,5 +44,6 @@ bool HashSetSTL::insert(int value) {
 }
 
 bool HashSetSTL::remove(int value) {
-    return false;
+    auto result = hashSet.erase(value);
+    return result == 1;
 }
