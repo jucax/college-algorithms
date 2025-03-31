@@ -73,7 +73,10 @@ class HashSetChaining : public HashSet {
  */
     bool insert(int value);
 
-
+    // remove a value from the set, returning true if the value was actually removed.
+    // It computes the appropriate bucket using computeHash(), then traverses the list.
+    // If the value is found, it is erased and the load factor is checked.
+    // If the load factor is below MIN_LOAD_FACTOR, the table is resized to half its size.
     bool remove(int value);
 
   private:

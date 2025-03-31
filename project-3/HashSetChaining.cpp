@@ -92,8 +92,21 @@ void HashSetChaining::resizeTable(int newSize) {
 
 bool HashSetChaining::remove(int value) {
     int index = computeHash(value);
-    hashTable[index].push_back(value);  // Add to the end
+    std::list<int> &bucket = hashTable[index];
 
+    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+        if (*it == value) { // Dereference and check if it matches
+            bucket.erase(it);
+
+            // Check for load factor in case we need to rehash
+            if (getLoadFactor() < MIN_LOAD_FACTOR && hashTable.size() > INITIAL_HASHTABLE_SIZE) {
+                resizeTable(hashTable.size() / 2);
+            }
+
+            return true;
+        }
+    }
+    return false;
 }
 
 int HashSetChaining::computeHash(int value) const {
