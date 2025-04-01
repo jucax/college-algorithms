@@ -12,7 +12,7 @@
  */ 
 
 void testHash(HashSet & hashSet, std::string filename, bool debug) {
-    std::ifstream fin("Root/"+filename);
+    std::ifstream fin(filename);
 
     char c;
     int value;
@@ -85,6 +85,5 @@ void runHashTest(std::string filename, bool debug) {
 
 int main() {
     runHashTest("data.txt", true);
-    runHashTest("data.txt", false);
     return 0;
 }

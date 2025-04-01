@@ -66,13 +66,13 @@ bool HashSetChaining::insert(int value) {
         return false;
     }
 
-    int index = computeHash(value);
-    hashTable[index].push_back(value);  // Add to the end 
-
     // Check for load factor in case we need to rehash
     if (getLoadFactor() > MAX_LOAD_FACTOR) {
         resizeTable(hashTable.size() * 2);
     }
+
+    int index = computeHash(value);
+    hashTable[index].push_back(value);  // Add to the end 
 
     return true;
 }
@@ -94,15 +94,14 @@ bool HashSetChaining::remove(int value) {
     int index = computeHash(value);
     std::list<int> &bucket = hashTable[index];
 
+    // Check for load factor in case we need to rehash
+    if (getLoadFactor() < MIN_LOAD_FACTOR && hashTable.size() > INITIAL_HASHTABLE_SIZE) {
+        resizeTable(hashTable.size() / 2);
+    }
+
     for (auto it = bucket.begin(); it != bucket.end(); ++it) {
         if (*it == value) { // Dereference and check if it matches
             bucket.erase(it);
-
-            // Check for load factor in case we need to rehash
-            if (getLoadFactor() < MIN_LOAD_FACTOR && hashTable.size() > INITIAL_HASHTABLE_SIZE) {
-                resizeTable(hashTable.size() / 2);
-            }
-
             return true;
         }
     }
