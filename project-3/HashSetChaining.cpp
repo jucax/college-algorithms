@@ -9,17 +9,19 @@ HashSetChaining::HashSetChaining() :
 int HashSetChaining::getSize() const {
     int count = 0;
     for (const std::list <int>& bucket : hashTable) {
-        count += bucket.size();
+        count += bucket.size(); // Add the sizes of every bucket
     }
     return count;
 }
 
 int HashSetChaining::getTableSize() const {
-    return hashTable.size();
+    return hashTable.size(); // Return quantity of buckets in the vector
 }
 
 double HashSetChaining::getLoadFactor() const {
-    return static_cast<double>(getSize() / getTableSize());
+    double elements = (double) getSize();  // Cast to double
+    double size = (double) getTableSize();
+    return elements / size; // Calculate and return load factor dividing the number of elements by the size of the table
 }
 
 void HashSetChaining::printSet() const {
@@ -61,14 +63,14 @@ int HashSetChaining::contains(int value) {
 }
 
 bool HashSetChaining::insert(int value) {
-    // Check if value is in the set
-    if (contains(value) != -1) {
-        return false;
-    }
-
     // Check for load factor in case we need to rehash
     if (getLoadFactor() > MAX_LOAD_FACTOR) {
         resizeTable(hashTable.size() * 2);
+    }
+
+    // Check if value is in the set
+    if (contains(value) != -1) {
+        return false;
     }
 
     int index = computeHash(value);
@@ -91,19 +93,22 @@ void HashSetChaining::resizeTable(int newSize) {
 }
 
 bool HashSetChaining::remove(int value) {
-    int index = computeHash(value);
-    std::list<int> &bucket = hashTable[index];
-
     // Check for load factor in case we need to rehash
-    if (getLoadFactor() < MIN_LOAD_FACTOR && hashTable.size() > INITIAL_HASHTABLE_SIZE) {
+    if (getLoadFactor() < MIN_LOAD_FACTOR) {
         resizeTable(hashTable.size() / 2);
     }
 
-    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
-        if (*it == value) { // Dereference and check if it matches
-            bucket.erase(it);
-            return true;
+    // Check if value is in the set, if it doesn't, we can't remove it
+    if(contains(value) == -1) {
+        return false;
+    } else {
+        int index = computeHash(value);
+        std::list<int> &bucket = hashTable[index];  
+        bucket.remove(value);
+        if (getLoadFactor() < MIN_LOAD_FACTOR) {
+                resizeTable(hashTable.size() / 2);
         }
+        return true;
     }
     return false;
 }
