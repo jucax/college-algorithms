@@ -93,23 +93,21 @@ void HashSetChaining::resizeTable(int newSize) {
 }
 
 bool HashSetChaining::remove(int value) {
-    // Check for load factor in case we need to rehash
-    if (getLoadFactor() < MIN_LOAD_FACTOR) {
-        resizeTable(hashTable.size() / 2);
+    int index = computeHash(value);
+    std::list<int>& bucket = hashTable[index];
+
+    for (auto it = bucket.begin(); it != bucket.end(); ++it) {
+        if (*it == value) {
+            bucket.erase(it);
+
+            if (getLoadFactor() < MIN_LOAD_FACTOR && hashTable.size() > INITIAL_HASHTABLE_SIZE) {
+                resizeTable(hashTable.size() / 2);
+            }
+
+            return true;
+        }
     }
 
-    // Check if value is in the set, if it doesn't, we can't remove it
-    if(contains(value) == -1) {
-        return false;
-    } else {
-        int index = computeHash(value);
-        std::list<int> &bucket = hashTable[index];  
-        bucket.remove(value);
-        if (getLoadFactor() < MIN_LOAD_FACTOR) {
-                resizeTable(hashTable.size() / 2);
-        }
-        return true;
-    }
     return false;
 }
 

@@ -53,7 +53,7 @@ class HashSetSTL : public HashSet {
     int contains(int value);
 
     // insert a value into the set, returning true if it is new to the current set
-    // Uses .insert(), which places the valueinto an appropriate bucket and return a pair with a boolean value indicating if it was a succesfull insertion or not.
+    // Uses .insert(), which places the value into an appropriate bucket and return a pair with a boolean value indicating if it was a succesfull insertion or not.
     // Rehashing is handled automatically by the std::unordered_set
     bool insert(int value);
 

@@ -84,6 +84,6 @@ void runHashTest(std::string filename, bool debug) {
 
 
 int main() {
-    runHashTest("test1.txt", false);
+    runHashTest("data.txt", false);
     return 0;
 }
