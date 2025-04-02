@@ -64,5 +64,6 @@ class HashSetSTL : public HashSet {
     bool remove(int value);
 
   private:
+    // Create unordered_set that will represent out hash table
     std::unordered_set<int> hashSet;
 };

@@ -8,6 +8,7 @@ HashSetChaining::HashSetChaining() :
 
 int HashSetChaining::getSize() const {
     int count = 0;
+    // Traverse the vector
     for (const std::list <int>& bucket : hashTable) {
         count += bucket.size(); // Add the sizes of every bucket
     }
@@ -25,19 +26,23 @@ double HashSetChaining::getLoadFactor() const {
 }
 
 void HashSetChaining::printSet() const {
+    // Traverse the vector
     for (const std::list <int>& bucket : hashTable) {
+        // Traverse each bucket
         for (int element : bucket){
-            std::cout << element << " ";
+            std::cout << element << " "; // Print elements next to each other
         }
     }
     std::cout << std::endl;
 }
 
 void HashSetChaining::printTable() const {
+    // Traverse in the vector
     for (const std::list <int>& bucket : hashTable) {
         if (bucket.empty()) std::cout << "-";
         else {
             bool first = true; // Print -> before the elements, except for the first one 
+            // Traverse in each bucket
             for (int element : bucket) {
                 if (!first) std::cout << "->";
                 std::cout << element;
@@ -50,9 +55,11 @@ void HashSetChaining::printTable() const {
 }
 
 int HashSetChaining::contains(int value) {
+    // Calculate the bucket to search in
     int index = computeHash(value);
     const std::list<int>& bucket = hashTable[index];
 
+    // Traverse the bucket
     for (int element : bucket) {
         if (element == value) {
             return index;  // Found the value at this bucket
@@ -72,7 +79,7 @@ bool HashSetChaining::insert(int value) {
     if (contains(value) != -1) {
         return false;
     }
-
+    // Calculate the bucket to insert in
     int index = computeHash(value);
     hashTable[index].push_back(value);  // Add to the end 
 
@@ -80,7 +87,7 @@ bool HashSetChaining::insert(int value) {
 }
 
 void HashSetChaining::resizeTable(int newSize) {
-    std::vector<std::list<int>> newBiggerTable(newSize);
+    std::vector<std::list<int>> newBiggerTable(newSize); // Create new list
 
     for (const std::list<int>& bucket : hashTable) {
         for (int element : bucket) {
@@ -93,13 +100,16 @@ void HashSetChaining::resizeTable(int newSize) {
 }
 
 bool HashSetChaining::remove(int value) {
+    // Calculate the bucket to search in
     int index = computeHash(value);
     std::list<int>& bucket = hashTable[index];
 
+    // Traverse looking for the value
     for (auto it = bucket.begin(); it != bucket.end(); ++it) {
         if (*it == value) {
             bucket.erase(it);
 
+            // Check for load factor in case we need to rehash
             if (getLoadFactor() < MIN_LOAD_FACTOR && hashTable.size() > INITIAL_HASHTABLE_SIZE) {
                 resizeTable(hashTable.size() / 2);
             }
@@ -112,5 +122,6 @@ bool HashSetChaining::remove(int value) {
 }
 
 int HashSetChaining::computeHash(int value) const {
+    // Hash function is modding by the table size, it ensures index stays in bounds.
     return value % hashTable.size();
 }

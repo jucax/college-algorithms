@@ -66,8 +66,13 @@ class HashSet {
     
 protected:
     // constants used by hashing strategies
+    // Start with a small table to save memory when few elements are inserted
     int    const  INITIAL_HASHTABLE_SIZE = 2;
+    // If more than 66% of the table is full, performance may drop due to collisions, 
+    // so it is a good point to rehash the table
     double const  MAX_LOAD_FACTOR   = 0.66;
+    // If less than 33% full, we shrink to avoid wasting space, so it is a good point 
+    // to rehash the table
     double const  MIN_LOAD_FACTOR   = MAX_LOAD_FACTOR/2.0;
 
 };
