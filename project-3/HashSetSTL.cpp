@@ -20,8 +20,9 @@ double HashSetSTL::getLoadFactor() const {
 }
 
 void HashSetSTL::printSet() const {
+    // Traverse hash set
     for (int element : hashSet) {
-        std::cout << element << " ";
+        std::cout << element << " "; // Print elements next to each other
     }
     std::cout << std::endl;
 }

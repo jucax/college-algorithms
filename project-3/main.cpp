@@ -56,7 +56,7 @@ void testHash(HashSet & hashSet, std::string filename, bool debug) {
     
     // Print T or F table
     std::cout << " Checking contains() for values from 1 to 100:" << std::endl;
-    
+
     // Check contains() for first 100 positive integers, a reasonable sample range.
     for (int i=1; i<=100; ++i) {
         if (i%10 == 1)
@@ -79,7 +79,7 @@ void testHash(HashSet & hashSet, std::string filename, bool debug) {
 
 void checkSetsAreTheSame(HashSet & hs1, HashSet & hs2) {
     bool anyFailed = false;
-    // Traverse the first 1000 elements of each hash set
+    // Traverse the first 1000 elements of each hash set, a reasonable sample range.
     for (unsigned i=1; i<=1000; ++i) {
         bool contains1 = (hs1.contains(i) != -1);
         bool contains2 = (hs2.contains(i) != -1);
@@ -122,5 +122,11 @@ void runHashTest(std::string filename, bool debug) {
 
 int main() {
     runHashTest("data.txt", false);
+    runHashTest("test1.txt", false);
+    runHashTest("test2.txt", false);
+    runHashTest("test3.txt", false);
+    runHashTest("test4.txt", false);
+    runHashTest("test5.txt", false);
+    runHashTest("test6.txt", false);
     return 0;
 }
