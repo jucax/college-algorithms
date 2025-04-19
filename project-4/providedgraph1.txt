@@ -1,0 +1,13 @@
+undirected
+vertex a
+vertex b
+vertex c
+vertex d
+vertex e
+edge a e 9
+edge a b 7
+edge b c 15
+edge b e 10
+edge c d 6
+edge c e 11
+dijkstra a d

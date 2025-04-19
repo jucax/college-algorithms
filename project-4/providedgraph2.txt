@@ -1,0 +1,13 @@
+undirected
+vertex amarillo
+vertex austin
+vertex dallas
+vertex houston
+vertex san_antonio
+edge amarillo austin 416
+edge amarillo dallas 334
+edge amarillo san_antonio 445
+edge austin dallas 182
+edge dallas houston 224
+edge houston san_antonio 189
+dijkstra amarillo houston

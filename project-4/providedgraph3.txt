@@ -1,0 +1,25 @@
+directed
+vertex s
+vertex a
+vertex b
+vertex c
+vertex d
+vertex e
+vertex f
+vertex t
+edge s f 9
+edge s b 14
+edge s a 15
+edge a b 5
+edge a c 20
+edge a t 44
+edge b c 30
+edge b e 18
+edge c d 11
+edge c e 2
+edge c t 16
+edge d e 6
+edge d t 6
+edge e f 24
+edge e t 19
+dijkstra s t
