@@ -57,5 +57,5 @@ void Digraph::print() const {
 }
 
 std::set<std::string> Digraph::getVertices() const {
-   return std::set<std::string>();
+   return vertices;
 }

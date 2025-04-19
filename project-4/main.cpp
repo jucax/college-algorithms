@@ -58,6 +58,9 @@ void dijkstra(const Digraph &g, std::string startv, std::string endv) {
         std::string neighborVertex = edge.endVertex; // Get the neighbor of the vertex we are visiting
         int weight = edge.weight;
 
+        // Print the vertex that we just checked
+        std::cout << "End vertex: " << neighborVertex << std::endl;
+
         int updatedDistance = distances[minVertex] + weight; // Add that weight to the provious distance accumulated
 
             if (updatedDistance < distances[neighborVertex]) { // If the new distance is better than the other alternaticves, then we update the priority queue
@@ -88,8 +91,9 @@ void dijkstra(const Digraph &g, std::string startv, std::string endv) {
     std::cout << std::endl << "Shortest path is:" << std::endl;
     // Print out the shortest path; match formatting
     for (const std::string& vertex : path) {
-    std::cout << vertex << " ";
+        std::cout << vertex << " ";
     }
+    std::cout << std::endl;
 
     // Print the length of the shortest path
     std::cout << std::endl << "It has length: " << distances[endv] << std::endl;
@@ -100,8 +104,12 @@ void dijkstra(const Digraph &g, std::string startv, std::string endv) {
     }
 
     std::cout << std::endl << "Final map of previous vertices:" << std::endl;
-    for (auto pair : previousVertex) {
-        std::cout << pair.first << ": " << pair.second << std::endl;
+    for (const std::string& vertex : g.getVertices()) {
+    std::cout << vertex << ": ";
+        if (previousVertex.find(vertex) != previousVertex.end()) {
+            std::cout << previousVertex[vertex];
+        }
+        std::cout << std::endl;
     }
 }
 
