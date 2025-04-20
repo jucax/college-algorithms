@@ -54,16 +54,21 @@ void dijkstra(const Digraph &g, std::string startv, std::string endv) {
 
         std::cout << "Visiting vertex " << minVertex << std::endl;
 
+        // Avoid process neighbors if we've reached the end vertex
+        if (minVertex == endv) {
+            continue;
+        }
+
         for (const DirectedEdge& edge : g.getEdges(minVertex)) {
-        std::string neighborVertex = edge.endVertex; // Get the neighbor of the vertex we are visiting
-        int weight = edge.weight;
+            std::string neighborVertex = edge.endVertex; // Get the neighbor of the vertex we are visiting
+            int weight = edge.weight;
+        
+            // Print the vertex that we just checked
+            std::cout << "End vertex: " << neighborVertex << std::endl;
 
-        // Print the vertex that we just checked
-        std::cout << "End vertex: " << neighborVertex << std::endl;
+            int updatedDistance = distances[minVertex] + weight; // Add that weight to the provious distance accumulated
 
-        int updatedDistance = distances[minVertex] + weight; // Add that weight to the provious distance accumulated
-
-            if (updatedDistance < distances[neighborVertex]) { // If the new distance is better than the other alternaticves, then we update the priority queue
+            if (pq.contains(neighborVertex) && updatedDistance < distances[neighborVertex]) { // If the new distance is better than the other alternaticves, then we update the priority queue
                 std::cout << "Updating distances[" << neighborVertex << "] from "
                         << distances[neighborVertex] << " to " << updatedDistance << std::endl;
 

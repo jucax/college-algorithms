@@ -13,5 +13,5 @@ edge b f 10
 edge c d 6
 edge c f 11
 edge d e 10
-edge e f 2
+edge f e 2
 dijkstra a d
