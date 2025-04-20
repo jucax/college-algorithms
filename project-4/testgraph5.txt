@@ -1,0 +1,13 @@
+directed
+vertex x
+vertex y
+vertex z
+vertex q
+vertex p
+edge x y 5
+edge x z 2
+edge z y 3
+edge y p 4
+edge z q 8
+edge q p 6
+dijkstra x p

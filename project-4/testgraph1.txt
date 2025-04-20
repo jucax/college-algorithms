@@ -1,0 +1,12 @@
+directed
+vertex city1
+vertex city2
+vertex city3
+vertex city4
+vertex city5
+edge city1 city2 2
+edge city2 city3 3
+edge city3 city4 4
+edge city4 city5 5
+edge city1 city5 99
+dijkstra city1 city5

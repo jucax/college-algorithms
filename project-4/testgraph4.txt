@@ -1,0 +1,8 @@
+undirected
+vertex comet
+vertex meteor
+vertex asteroid
+vertex blackhole
+edge comet meteor 12
+edge meteor asteroid 12
+dijkstra comet asteroid

@@ -1,0 +1,11 @@
+directed
+vertex red
+vertex blue
+vertex green
+vertex yellow
+edge red blue 8
+edge red green 3
+edge blue yellow 6
+edge green yellow 2
+edge yellow blue 1
+dijkstra red yellow

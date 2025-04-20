@@ -1,0 +1,10 @@
+undirected
+vertex tokyo
+vertex osaka
+vertex nagoya
+vertex kyoto
+edge tokyo osaka 20
+edge osaka nagoya 20
+edge nagoya kyoto 20
+edge kyoto tokyo 5
+dijkstra tokyo nagoya
