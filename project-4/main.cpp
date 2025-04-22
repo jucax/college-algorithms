@@ -183,6 +183,7 @@ int main() {
             dijkstra(g, words[1], words[2]);
         }
     }
+    
     fin.close();
 }
 
