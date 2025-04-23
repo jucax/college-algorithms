@@ -83,7 +83,7 @@ void dijkstra(const Digraph &g, std::string startv, std::string endv) {
 
                 // If the new distance is better than the other alternaticves, then we update the priority queue
                 if (pq.contains(neighborVertex) && updatedDistance < distances[neighborVertex]) { 
-                    std::cout << "Updating distances[" << neighborVertex << "] from "
+                    std::cout << "  Updating distances[" << neighborVertex << "] from "
                             << distances[neighborVertex] << " to " << updatedDistance << std::endl;
 
                     // Update distances

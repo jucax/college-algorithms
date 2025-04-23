@@ -7,14 +7,14 @@
 #include "PriorityQueue.h"
 
 /*
- * Inserts a new string representing the vertex with the given priority into the multimap that represents the queue.
+ * Inserts a new string s representing the vertex with the given priority into the multimap that represents the queue.
  */
 void PriorityQueue::insert(std::string s, int priority) {
     pq.insert({priority, s}); // Insert pair into multimap
 }
 
 /*
- * Checks if the string representing the vertex is already in the priority queue.
+ * Checks if the string s representing the vertex is already in the priority queue.
  */
 bool PriorityQueue::contains(std::string s) {
     for (const auto& pair : pq) { // Traverse the multimap
@@ -26,7 +26,7 @@ bool PriorityQueue::contains(std::string s) {
 }
 
 /*
- * Updates the priority of the string representing the vertex by first removing the old pair. 
+ * Updates the priority of the string s representing the vertex by first removing the old pair. 
  * Then it inserts the new pair with the priority updated.
  */
 void PriorityQueue::updatePriority(std::string s, int newpriority) {

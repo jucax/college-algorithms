@@ -38,14 +38,6 @@ High-Level Overview:
             Efficiency Considerations:
                 - Time Complexity: O(1), for access to map and return of reference.
                 - Space Complexity: O(1), a reference to existing data.
-
-        3. getEdges() method
-            Returns the list of DirectedEdges for the given vertex.
-            Accesses the adjacency map using .at() which throws an exception if the vertex does not exist, ensuring safe access.
-
-            Efficiency Considerations:
-                - Time Complexity: O(1), for access to map and return of reference.
-                - Space Complexity: O(1), a reference to existing data.
             
         4. getWeight() method
             Returns the weight of the edge from vertex v1 to v2.
