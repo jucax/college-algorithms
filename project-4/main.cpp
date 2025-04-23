@@ -148,7 +148,7 @@ int main() {
     std::string filename;
     std::cout << "Enter the filename\n";
     std::cin >> filename;
-    std::ifstream fin(filename);
+    std::ifstream fin("Root/" + filename);
     if (fin.fail()) {
         std::cerr << "Could not open file. Exiting." << std::endl;
         exit(1);
@@ -183,7 +183,7 @@ int main() {
             dijkstra(g, words[1], words[2]);
         }
     }
-    
+
     fin.close();
 }
 

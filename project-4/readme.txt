@@ -133,7 +133,339 @@ Known Limitations:
     I believe my code fully meets the requirements of the assignment for an input that follows the specifications outlined in the project description.
 
 Test Cases:
-    1.  Input: testgraph1.txt
+    1.  Input: providedgraph1.txt
+            undirected
+            vertex a
+            vertex b
+            vertex c
+            vertex d
+            vertex e
+            edge a e 9
+            edge a b 7
+            edge b c 15
+            edge b e 10
+            edge c d 6
+            edge c e 11
+            dijkstra a d
+
+        Output: 
+            Vertices: a b c d e 
+            Directed edges: 
+            a -> e: 9
+            a -> b: 7
+            b -> a: 7
+            b -> c: 15
+            b -> e: 10
+            c -> b: 15
+            c -> d: 6
+            c -> e: 11
+            d -> c: 6
+            e -> a: 9
+            e -> b: 10
+            e -> c: 11
+
+            Run dijkstra a d 5
+            Visiting vertex a
+            End vertex: e
+            Updating distances[e] from 1000000 to 9
+            End vertex: b
+            Updating distances[b] from 1000000 to 7
+            Visiting vertex b
+            End vertex: a
+            End vertex: c
+            Updating distances[c] from 1000000 to 22
+            End vertex: e
+            Visiting vertex e
+            End vertex: a
+            End vertex: b
+            End vertex: c
+            Updating distances[c] from 22 to 20
+            Visiting vertex c
+            End vertex: b
+            End vertex: d
+            Updating distances[d] from 1000000 to 26
+            End vertex: e
+            Visiting vertex d
+
+            Shortest path is:
+            a e c d 
+
+            It has length: 26
+            Final map of distances:
+            a: 0
+            b: 7
+            c: 20
+            d: 26
+            e: 9
+
+            Final map of previous vertices:
+            a: 
+            b: a
+            c: e
+            d: c
+            e: a
+
+        Why?: Ensures that the algorithm is capable of  updating distances when a better path is discovered after initial exploration. It also tests that the structure handles undirected edges as bidirectional correctly and that all paths are fully evaluated before determining the shortest one. 
+    
+    2.  Input: providedgraph2.txt
+            undirected
+            vertex amarillo
+            vertex austin
+            vertex dallas
+            vertex houston
+            vertex san_antonio
+            edge amarillo austin 416
+            edge amarillo dallas 334
+            edge amarillo san_antonio 445
+            edge austin dallas 182
+            edge dallas houston 224
+            edge houston san_antonio 189
+            dijkstra amarillo houston
+
+        Output: 
+            Vertices: amarillo austin dallas houston san_antonio 
+            Directed edges: 
+            amarillo -> austin: 416
+            amarillo -> dallas: 334
+            amarillo -> san_antonio: 445
+            austin -> amarillo: 416
+            austin -> dallas: 182
+            dallas -> amarillo: 334
+            dallas -> austin: 182
+            dallas -> houston: 224
+            houston -> dallas: 224
+            houston -> san_antonio: 189
+            san_antonio -> amarillo: 445
+            san_antonio -> houston: 189
+
+            Run dijkstra amarillo houston 5
+            Visiting vertex amarillo
+            End vertex: austin
+            Updating distances[austin] from 1000000 to 416
+            End vertex: dallas
+            Updating distances[dallas] from 1000000 to 334
+            End vertex: san_antonio
+            Updating distances[san_antonio] from 1000000 to 445
+            Visiting vertex dallas
+            End vertex: amarillo
+            End vertex: austin
+            End vertex: houston
+            Updating distances[houston] from 1000000 to 558
+            Visiting vertex austin
+            End vertex: amarillo
+            End vertex: dallas
+            Visiting vertex san_antonio
+            End vertex: amarillo
+            End vertex: houston
+            Visiting vertex houston
+
+            Shortest path is:
+            amarillo dallas houston 
+
+            It has length: 558
+            Final map of distances:
+            amarillo: 0
+            austin: 416
+            dallas: 334
+            houston: 558
+            san_antonio: 445
+
+            Final map of previous vertices:
+            amarillo: 
+            austin: amarillo
+            dallas: amarillo
+            houston: dallas
+            san_antonio: amarillo
+
+        Why?: Simulates a real-world map with large edge weights and multiple long paths. It also makes sure large weights don’t interfere with priority comparisons and that Dijkstra’s logic stays intact under such values.
+
+    3.  Input: providedgraph3.txt
+            directed
+            vertex red
+            vertex blue
+            vertex green
+            vertex yellow
+            edge red blue 8
+            edge red green 3
+            edge blue yellow 6
+            edge green yellow 2
+            edge yellow blue 1
+            dijkstra red yellow
+
+        Output: 
+            Vertices: a b c d e f s t 
+            Directed edges: 
+            a -> b: 5
+            a -> c: 20
+            a -> t: 44
+            b -> c: 30
+            b -> e: 18
+            c -> d: 11
+            c -> e: 2
+            c -> t: 16
+            d -> e: 6
+            d -> t: 6
+            e -> f: 24
+            e -> t: 19
+            s -> f: 9
+            s -> b: 14
+            s -> a: 15
+
+            Run dijkstra s t 8
+            Visiting vertex s
+            End vertex: f
+            Updating distances[f] from 1000000 to 9
+            End vertex: b
+            Updating distances[b] from 1000000 to 14
+            End vertex: a
+            Updating distances[a] from 1000000 to 15
+            Visiting vertex f
+            Visiting vertex b
+            End vertex: c
+            Updating distances[c] from 1000000 to 44
+            End vertex: e
+            Updating distances[e] from 1000000 to 32
+            Visiting vertex a
+            End vertex: b
+            End vertex: c
+            Updating distances[c] from 44 to 35
+            End vertex: t
+            Updating distances[t] from 1000000 to 59
+            Visiting vertex e
+            End vertex: f
+            End vertex: t
+            Updating distances[t] from 59 to 51
+            Visiting vertex c
+            End vertex: d
+            Updating distances[d] from 1000000 to 46
+            End vertex: e
+            End vertex: t
+            Visiting vertex d
+            End vertex: e
+            End vertex: t
+            Visiting vertex t
+
+            Shortest path is:
+            s b e t 
+
+            It has length: 51
+            Final map of distances:
+            a: 15
+            b: 14
+            c: 35
+            d: 46
+            e: 32
+            f: 9
+            s: 0
+            t: 51
+
+            Final map of previous vertices:
+            a: s
+            b: s
+            c: a
+            d: c
+            e: b
+            f: s
+            s: 
+            t: e
+
+        Why?: Tests the algorithm with a densely connected and directed graph with multiple entry points to the destination. It ensures that shortest paths are correctly reevaluated when better options arise later in the process.
+
+    4.  Input: providedgraph4.txt
+            undirected
+            vertex a
+            vertex b
+            vertex c
+            vertex d
+            vertex e
+            vertex f
+            edge a e 14
+            edge a f 9
+            edge a b 7
+            edge b c 15
+            edge b f 10
+            edge c d 6
+            edge c f 11
+            edge d e 10
+            edge f e 2
+            dijkstra a d
+
+        Output: 
+            Vertices: a b c d e f 
+            Directed edges: 
+            a -> e: 14
+            a -> f: 9
+            a -> b: 7
+            b -> a: 7
+            b -> c: 15
+            b -> f: 10
+            c -> b: 15
+            c -> d: 6
+            c -> f: 11
+            d -> c: 6
+            d -> e: 10
+            e -> a: 14
+            e -> d: 10
+            e -> f: 2
+            f -> a: 9
+            f -> b: 10
+            f -> c: 11
+            f -> e: 2
+
+            Run dijkstra a d 6
+            Visiting vertex a
+            End vertex: e
+            Updating distances[e] from 1000000 to 14
+            End vertex: f
+            Updating distances[f] from 1000000 to 9
+            End vertex: b
+            Updating distances[b] from 1000000 to 7
+            Visiting vertex b
+            End vertex: a
+            End vertex: c
+            Updating distances[c] from 1000000 to 22
+            End vertex: f
+            Visiting vertex f
+            End vertex: a
+            End vertex: b
+            End vertex: c
+            Updating distances[c] from 22 to 20
+            End vertex: e
+            Updating distances[e] from 14 to 11
+            Visiting vertex e
+            End vertex: a
+            End vertex: d
+            Updating distances[d] from 1000000 to 21
+            End vertex: f
+            Visiting vertex c
+            End vertex: b
+            End vertex: d
+            End vertex: f
+            Visiting vertex d
+
+            Shortest path is:
+            a f e d 
+
+            It has length: 21
+            Final map of distances:
+            a: 0
+            b: 7
+            c: 20
+            d: 21
+            e: 11
+            f: 9
+
+            Final map of previous vertices:
+            a: 
+            b: a
+            c: f
+            d: e
+            e: f
+            f: a
+
+        Why?: Tests with a dense graph with overlapping connections and many similar-cost paths, which allows to test priority queue accuracy and correct ordering of node visits. It confirms that the algorithm handles tie-breaking consistently and selects the truly optimal path when multiple near-optimal paths exist.
+
+    5.  Input: testgraph1.txt
             directed
             vertex city1
             vertex city2
@@ -193,7 +525,7 @@ Test Cases:
 
         Why?: Ensures the algorithm avoids a tempting but misleading direct path with a high cost. It checks that the algorithm properly accumulates weights over a chain of cheaper edges instead of jumping to a far node too early. It makes sure the internal comparison logic is solid and consistent.
 
-    2.  Input: testgraph2.txt
+    6.  Input: testgraph2.txt
             undirected
             vertex tokyo
             vertex osaka
@@ -249,7 +581,7 @@ Test Cases:
 
         Why?: Ensures that the algorithm correctly explores cycles and can find less obvious but shorter paths that go “around” instead of straight through. This test checks that backtracking through undirected edges works as expected and helps ensure priority updates are properly handled.
 
-    3.  Input: testgraph3.txt
+    7.  Input: testgraph3.txt
             directed
             vertex red
             vertex blue
@@ -302,7 +634,7 @@ Test Cases:
 
         Why?: Tests the algorithm's handling of directed cycles, specifically whether it avoids infinite loops and ignores revisiting previously finalized nodes. It also pushes the algorithm to pick between two paths of different cost, checking the correctness of the priority queue’s behavior after a cycle is introduced.
 
-    4.  Input: testgraph4.txt
+    8.  Input: testgraph4.txt
             undirected
             vertex comet
             vertex meteor
@@ -348,7 +680,7 @@ Test Cases:
 
         Why?: Checks if the algorithm behaves collectly when there's an unreachable vertex in the graph. Ensures that non-connected nodes don’t cause crashes or affect the output. It confirms the edge case of non-participating nodes.
 
-    5.  Input: testgraph5.txt
+    9.  Input: testgraph5.txt
             directed
             vertex x
             vertex y
